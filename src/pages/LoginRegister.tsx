@@ -8,7 +8,7 @@ function LoginRegister() {
   const [password, setPassword] = useState("");
   const [passwordR, setPasswordR] = useState("");
   const [emailR, setEmailR] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [flipped, setFlipped] = useState(false); // 🔹 controla el giro
 
   // 🟢 Verificar sesión activa o refrescar token
   useEffect(() => {
@@ -16,18 +16,15 @@ function LoginRegister() {
       const token = localStorage.getItem("accessToken");
       const refreshToken = localStorage.getItem("refreshToken");
 
-      if (!token) return; // no hay sesión previa
+      if (!token) return;
 
-      // Intentar verificar token
       const response = await fetch("http://localhost:4000/api/auth/verify", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
-        console.log("✅ Sesión válida, redirigiendo...");
         navigate("/ToDo");
       } else if (refreshToken) {
-        // Intentar refrescar token si el actual expiró
         const refreshRes = await fetch("http://localhost:4000/api/auth/refresh", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -37,16 +34,13 @@ function LoginRegister() {
         if (refreshRes.ok) {
           const newData = await refreshRes.json();
           localStorage.setItem("accessToken", newData.accessToken);
-          console.log("♻️ Token renovado, redirigiendo...");
           navigate("/ToDo");
         } else {
-          console.log("⚠️ Tokens expirados, el usuario debe volver a loguearse");
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
         }
       }
     };
-
     verificarSesion();
   }, [navigate]);
 
@@ -64,7 +58,6 @@ function LoginRegister() {
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
-        console.log("✅ Inicio de sesión exitoso");
         navigate("/ToDo");
       } else {
         console.error("❌ Error en login:", data.message);
@@ -82,7 +75,7 @@ function LoginRegister() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: fullName,
+          name: null,
           email: emailR,
           password: passwordR,
         }),
@@ -91,7 +84,7 @@ function LoginRegister() {
       const data = await response.json();
       if (response.ok) {
         console.log("✅ Registro exitoso:", data);
-        navigate("/");
+        setFlipped(false); // 🔹 volver a la vista login
       } else {
         console.error("❌ Error en registro:", data.message);
       }
@@ -102,7 +95,8 @@ function LoginRegister() {
 
   return (
     <div className="logContainer">
-      <div className="cards">
+      <div className={`cards ${flipped ? "flipped" : ""}`}>
+        {/* LOGIN */}
         <div className="login containers">
           <h2>Login</h2>
           <form onSubmit={handleLogin}>
@@ -123,20 +117,20 @@ function LoginRegister() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <button type="submit">Login</button>
+            <button
+              type="button"
+              className="change"
+              onClick={() => setFlipped(true)} // 🔹 girar hacia Register
+            >
+              Register
+            </button>
           </form>
         </div>
 
+        {/* REGISTER */}
         <div className="register containers">
           <h2>Register</h2>
           <form onSubmit={handleRegister}>
-            <h5>Nombre Completo</h5>
-            <input
-              className="inputLog"
-              type="text"
-              placeholder="Nombre Completo"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
             <h5>Email</h5>
             <input
               className="inputLog"
@@ -153,7 +147,14 @@ function LoginRegister() {
               value={passwordR}
               onChange={(e) => setPasswordR(e.target.value)}
             />
-            <button>Register</button>
+            <button type="submit">Register</button>
+            <button
+              type="button"
+              className="change"
+              onClick={() => setFlipped(false)} // 🔹 volver al Login
+            >
+              Login
+            </button>
           </form>
         </div>
       </div>
