@@ -1,0 +1,22 @@
+:root {
+  --bg: #ffffff;
+  --bgLogContainerFisrt: #dadada;
+  --text: #111111;
+  --primary: #3b82f6;
+}
+
+:root[data-theme="dark"] {
+  --bgLogContainerFisrt: #535353;
+  --bg: #494949;
+  --text: #ffffff;
+  --primary: #60a5fa;
+}
+
+/* Detectar tema del sistema */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bgLogContainerFisrt: #0c256e;
+    --bg: #0F1F52;
+    --text: #ffffff;
+  }
+}

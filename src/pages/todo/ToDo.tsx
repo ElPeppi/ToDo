@@ -1,5 +1,5 @@
 
-import "../styles/todo/ToDo.css";
+import "../todo/ToDo.css";
 import { useNavigate } from "react-router-dom";
 
 function ToDo() {

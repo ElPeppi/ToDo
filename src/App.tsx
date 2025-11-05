@@ -1,7 +1,7 @@
 import {BrowserRouter as Router, Routes, Route} from 'react-router'; 
 import './App.css';
-import LogReg from "./pages/LoginRegister";
-import ToDo from "./pages/ToDo";
+import LogReg from "./pages/loginRegister/LoginRegister";
+import ToDo from "./pages/todo/ToDo";
 
 function App() {
 

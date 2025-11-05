@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "../styles/login/LoginRegister.css";
+import "../loginRegister/LoginRegister.css";
 
 function LoginRegister() {
   const navigate = useNavigate();
@@ -8,8 +8,7 @@ function LoginRegister() {
   const [password, setPassword] = useState("");
   const [passwordR, setPasswordR] = useState("");
   const [emailR, setEmailR] = useState("");
-  const [flipped, setFlipped] = useState(false); // 🔹 controla el giro
-
+  const [flipped, setFlipped] = useState(false);
   // 🟢 Verificar sesión activa o refrescar token
   useEffect(() => {
     const verificarSesion = async () => {
@@ -84,7 +83,6 @@ function LoginRegister() {
       const data = await response.json();
       if (response.ok) {
         console.log("✅ Registro exitoso:", data);
-        setFlipped(false); // 🔹 volver a la vista login
       } else {
         console.error("❌ Error en registro:", data.message);
       }
@@ -94,72 +92,51 @@ function LoginRegister() {
   };
 
   return (
-    <div className="logContainer">
-      <div className={`cards ${flipped ? "flipped" : ""}`}>
-        {/* LOGIN */}
-        <div className="login containers">
-          <h2>Login</h2>
-          <form onSubmit={handleLogin}>
-            <h5>Email</h5>
-            <input
-              className="inputLog"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <h5>Password</h5>
-            <input
-              className="inputLog"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button type="submit">Login</button>
-            <button
-              type="button"
-              className="change"
-              onClick={() => setFlipped(true)} // 🔹 girar hacia Register
-            >
-              Register
-            </button>
-          </form>
-        </div>
+    <div>
+      <button className="topSwitch" onClick={() => setFlipped(!flipped)}>
+        {flipped ? "Login →" : "Signup →"}
+      </button>
+      <div className="authWrapper">
+        <div className={`sliderContainer ${flipped ? "slide" : ""}`}>
+          <div className="formBox">
+            <h2>Here you can Login</h2>
+            <p>Let's join us :)</p>
+            <form onSubmit={handleLogin}>
+              <label>Email</label>
+              <input className="inputLog" type="email" value={email}
+                placeholder="Email" onChange={e => setEmail(e.target.value)} />
 
-        {/* REGISTER */}
-        <div className="register containers">
-          <h2>Register</h2>
-          <form onSubmit={handleRegister}>
-            <h5>Email</h5>
-            <input
-              className="inputLog"
-              type="email"
-              placeholder="Email"
-              value={emailR}
-              onChange={(e) => setEmailR(e.target.value)}
-            />
-            <h5>Password</h5>
-            <input
-              className="inputLog"
-              type="password"
-              placeholder="Password"
-              value={passwordR}
-              onChange={(e) => setPasswordR(e.target.value)}
-            />
-            <button type="submit">Register</button>
-            <button
-              type="button"
-              className="change"
-              onClick={() => setFlipped(false)} // 🔹 volver al Login
-            >
-              Login
-            </button>
-          </form>
+              <label>Password</label>
+              <input className="inputLog" type="password" value={password}
+                placeholder="Password" onChange={e => setPassword(e.target.value)} />
+
+              <button type="submit">LOGIN</button>
+            </form>
+          </div>
+
+          {/* REGISTER FORM */}
+          <div className="formBox">
+            <h2>Create an account</h2>
+            <p>Welcome! Just a few steps :)</p>
+            <form onSubmit={handleRegister}>
+              <label>Email</label>
+              <input className="inputLog" type="email" value={emailR}
+                placeholder="Email" onChange={e => setEmailR(e.target.value)} />
+
+              <label>Password</label>
+              <input className="inputLog" type="password" value={passwordR}
+                placeholder="Password" onChange={e => setPasswordR(e.target.value)} />
+
+              <button type="submit">REGISTER</button>
+            </form>
+          </div>
+
         </div>
       </div>
     </div>
+
   );
+
 }
 
 export default LoginRegister;
