@@ -5,3 +5,9 @@
   justify-content: center;
   align-items: center;
 }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.4s ease;
+}

@@ -5,6 +5,7 @@
   --primary: #3b82f6;
 }
 
+/* 📌 Tema oscuro */
 :root[data-theme="dark"] {
   --bgLogContainerFisrt: #535353;
   --bg: #494949;
@@ -12,11 +13,24 @@
   --primary: #60a5fa;
 }
 
-/* Detectar tema del sistema */
+/* 📌 Preferencia automática del sistema */
 @media (prefers-color-scheme: dark) {
   :root {
     --bgLogContainerFisrt: #0c256e;
     --bg: #0F1F52;
     --text: #ffffff;
   }
+}
+
+/* ============ FONDOS POR PÁGINA ============ */
+
+/* Login / Register */
+:root[data-page="login"],
+:root[data-page="register"] {
+  --bg: #0d1b44;
+}
+
+/* To-Do */
+:root[data-page="todo"] {
+  --bg: #bec9eb;
 }
