@@ -15,7 +15,7 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      const response = await fetch("https://lhghdq2r-4000.use.devtunnels.ms/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

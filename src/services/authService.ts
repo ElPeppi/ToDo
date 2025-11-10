@@ -1,5 +1,5 @@
 // src/services/authService.ts
-const API_URL = "http://localhost:4000"; // tu backend
+const API_URL = "https://lhghdq2r-4000.use.devtunnels.ms/"; // tu backend
 
 export const fetchWithAuth = async (url: string, options: any = {}) => {
   let token = localStorage.getItem("accessToken");
@@ -14,7 +14,7 @@ export const fetchWithAuth = async (url: string, options: any = {}) => {
     "Content-Type": "application/json",
   };
 
-  let response = await fetch(`${API_URL}${url}`, options);
+  let response = await fetch("/auth/check-token");
 
   // Si el token expiró, intenta refrescarlo
   if (response.status === 403 && refreshToken) {
@@ -30,7 +30,7 @@ export const fetchWithAuth = async (url: string, options: any = {}) => {
 
       // Reintentar la petición original con el nuevo token
       options.headers.Authorization = `Bearer ${newData.accessToken}`;
-      response = await fetch(`${API_URL}${url}`, options);
+      response = await fetch("/auth/check-token");
     } else {
       // Refresh también falló → cerrar sesión
       localStorage.removeItem("accessToken");

@@ -5,6 +5,7 @@ import Login from "./pages/loginRegister/Login";
 import Register from "./pages/loginRegister/Register";
 import ToDo from "./pages/todo/ToDo";
 import PageTransition from "./components/PageTransition";
+import VerifyPage from "./pages/loginRegister/VerifyPage";
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -23,6 +24,8 @@ function AnimatedRoutes() {
         <Route path="/ToDo" element={
           <PageTransition><ToDo /></PageTransition>
         } />
+        <Route path="/verify" element={<VerifyPage />} />
+
       </Routes>
     </AnimatePresence>
   );
