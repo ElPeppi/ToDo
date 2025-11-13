@@ -3,10 +3,11 @@ import { useState, useEffect } from "react";
 import "./LoginRegister.css";
 
 
-function LoginPage() {
+function LoginPage({setPopup}: {setPopup:Function}) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  
 
   useEffect(() => {
     document.documentElement.setAttribute("data-page", "login");
@@ -15,7 +16,7 @@ function LoginPage() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://lhghdq2r-4000.use.devtunnels.ms/api/auth/login", {
+      const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -25,12 +26,13 @@ function LoginPage() {
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
+        setPopup({ message: "Login successful!", type: "success" });
         navigate("/ToDo");
       } else {
-        console.error("❌ Error en login:", data.message);
+        setPopup({ message: data.message || "Login failed", type: "error" });
       }
-    } catch (error) {
-      console.error("⚠️ Error al hacer login:", error);
+      } catch (error) {
+        setPopup({ message: "An error occurred during login", type: "error" });
     }
   };
 

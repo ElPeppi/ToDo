@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./LoginRegister.css";
 
-function RegisterPage() {
+function RegisterPage({setPopup}: {setPopup:Function}) {
     const navigate = useNavigate();
     const [emailR, setEmailR] = useState("");
     const [passwordR, setPasswordR] = useState("");
@@ -27,12 +27,13 @@ function RegisterPage() {
 
             const data = await response.json();
             if (response.ok) {
-                console.log("✅ Registro exitoso:", data);
+                setPopup({ message: "✅ Registro exitoso! Por favor, verifica tu email.", type: "success" });
+                navigate("/");
             } else {
-                console.error("❌ Error en registro:", data.message);
+                setPopup({ message: data.message || "Error en registro", type: "error" });
             }
         } catch (error) {
-            console.error("⚠️ Error al registrar:", error);
+            setPopup({ message: "Error al registrar", type: "error" });
         }
     };
 
