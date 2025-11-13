@@ -1,16 +1,50 @@
 
 import "../todo/ToDo.css";
 import { useNavigate } from "react-router-dom";
+import PopupCreateGroup from "../../components/pop-ups/group/PopupCreateGroup";
 import { useEffect, useState } from "react";
 import Menu from "../../components/menu/Menu";
 
 
-
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
 function ToDo({ setPopup }: { setPopup: Function }) {
-    const [tasks, setTasks] = useState<string[]>([]);
+    const [tasks, setTasks] = useState<any[]>([]);
     const [tittle, setTittle] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
+    const [groupName, setGroupName] = useState("");
+    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const [showCreateGroup, setShowCreateGroup] = useState(false);
+    useEffect(() => {
+        document.documentElement.setAttribute("data-page", "todo");
+
+        const fetchTasks = async () => {
+            try {
+                const response = await fetch("http://localhost:4000/api/tasks", {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                });
+
+                const data = await response.json();
+                console.log(data);
+                if (response.ok) {
+                    setTasks(data); // 🟢 adapta al nombre exacto en BD
+                } else {
+                    setPopup({ message: "Error al cargar tareas", type: "error" });
+                }
+            } catch (error) {
+                setPopup({ message: "Error de conexión con el servidor", type: "error" });
+            }
+        };
+
+        fetchTasks();
+    }, []);
+
     const addTask = async () => {
         if (tittle.trim() === "") return;
         try {
@@ -28,7 +62,6 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
             });
             const data = await response.json();
-            console.log(data);
             if (response.ok) {
 
                 setTasks([...tasks, tittle]);
@@ -45,9 +78,33 @@ function ToDo({ setPopup }: { setPopup: Function }) {
     };
 
 
-    const removeTask = (index: number) => {
-        setTasks(tasks.filter((_, i) => i !== index));
+    const removeTask = async (index: number) => {
+        const taskId = tasks[index].id;
+
+        try {
+            const response = await fetch(`http://localhost:4000/api/tasks/${taskId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setPopup({ message: data.message || "Error al eliminar tarea", type: "error" });
+                return;
+            }
+
+            // Quitar tarea del estado
+            setTasks(tasks.filter((_, i) => i !== index));
+            setPopup({ message: "Tarea eliminada!", type: "success" });
+
+        } catch (error) {
+            setPopup({ message: "Error de conexión al eliminar", type: "error" });
+        }
     };
+
     useEffect(() => {
         document.documentElement.setAttribute("data-page", "todo");
     }, []);
@@ -73,6 +130,12 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 </button>
             </header>
             <Menu />
+            {showCreateGroup && (
+                <PopupCreateGroup
+                    onClose={() => setShowCreateGroup(false)}
+                />
+            )}
+
             <div className="todo-container">
                 <div className="todo-input-box">
 
@@ -96,21 +159,26 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                     <select name="Grupos" id="GruposSelect">
                         <option value="">Selecciona un grupo</option>
                     </select>
-                    <button>Crear Grupo</button>
+                    <button onClick={() => setShowCreateGroup(true)}>Crear Grupo</button>
                     <button onClick={addTask}>+</button>
 
                 </div>
 
                 <ul className="todo-list">
-                    {tasks.map((task, i) => (
+                    {tasks.map((task: any, i: number) => (
                         <li key={i} className="todo-item">
-                            <span>{task}</span>
+                            <div>
+                                <h3>{task.titulo}</h3>
+                                <p>{task.descripcion}</p>
+                                <small>Vence: {task.fecha_vencimiento?.split("T")[0]}</small>
+                            </div>
                             <button onClick={() => removeTask(i)} className="delete-btn">
                                 ✖
                             </button>
                         </li>
                     ))}
                 </ul>
+
             </div>
         </div>
     </>);

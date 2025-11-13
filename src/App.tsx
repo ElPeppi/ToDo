@@ -6,7 +6,7 @@ import Login from "./pages/loginRegister/Login";
 import Register from "./pages/loginRegister/Register";
 import ToDo from "./pages/todo/ToDo";
 import PageTransition from "./components/PageTransition";
-import PopupMessage from "./components/PopupMessage";
+import PopupMessage from "./components/pop-ups/message/PopupMessage";
 import VerifyPage from "./pages/loginRegister/VerifyPage";
 
 // =========================
