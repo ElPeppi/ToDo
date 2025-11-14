@@ -34,3 +34,7 @@
 :root[data-page="todo"] {
   --bg: #102a7a;
 }
+
+:root[data-page="groups"] {
+  --bg: #201f3b;
+}

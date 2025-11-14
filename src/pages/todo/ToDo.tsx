@@ -19,9 +19,25 @@ function ToDo({ setPopup }: { setPopup: Function }) {
     const [groupName, setGroupName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
+    const [groups, setGroups] = useState<any[]>([]);
+    const fetchGroups = async () => {
+        const response = await fetch("http://localhost:4000/api/groups", {
+            headers: {
+                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        });
+
+        const data = await response.json();
+        console.log("Fetched groups:", data);
+        if (response.ok) {
+            setGroups(data);
+        }
+    };
+
+
     useEffect(() => {
         document.documentElement.setAttribute("data-page", "todo");
-
+        fetchGroups();
         const fetchTasks = async () => {
             try {
                 const response = await fetch("http://localhost:4000/api/tasks", {
@@ -133,8 +149,11 @@ function ToDo({ setPopup }: { setPopup: Function }) {
             {showCreateGroup && (
                 <PopupCreateGroup
                     onClose={() => setShowCreateGroup(false)}
+                    setPopup={setPopup}
+                    onGroupCreated={fetchGroups}  // LO AÑADIREMOS LUEGO
                 />
             )}
+
 
             <div className="todo-container">
                 <div className="todo-input-box">
@@ -158,7 +177,11 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                     />
                     <select name="Grupos" id="GruposSelect">
                         <option value="">Selecciona un grupo</option>
+                        {groups.map((g) => (
+                            <option key={g.id} value={g.id}>{g.nombre}</option>
+                        ))}
                     </select>
+
                     <button onClick={() => setShowCreateGroup(true)}>Crear Grupo</button>
                     <button onClick={addTask}>+</button>
 

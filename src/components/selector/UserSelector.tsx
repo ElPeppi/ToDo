@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./UserSelector.css";
 
 interface User {
@@ -8,17 +8,53 @@ interface User {
 }
 
 export default function UserSelector({
-  users,
   selected,
   setSelected
 }: {
-  users: User[];
   selected: User[];
   setSelected: (users: User[]) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [remoteUsers, setRemoteUsers] = useState<User[]>([]);
+  const lastInitial = useRef("");
 
-  const filtered = users.filter(
+  // 🔵 Pedir usuarios SOLO cuando se escribe la primera letra
+  useEffect(() => {
+    const initial = query.trim().charAt(0)?.toLowerCase();
+
+    if (query.length === 1) {
+      // Si se cambió la primera letra → nueva consulta
+      if (initial !== lastInitial.current) {
+        fetchUsers(initial);
+        lastInitial.current = initial;
+      }
+    }
+  }, [query]);
+
+  // 🔵 Función que consulta al backend
+  const fetchUsers = async (initial: string) => {
+    if (!initial) return;
+
+    try {
+      console.log("Fetching users starting with:", initial);
+      const response = await fetch(
+        `http://localhost:4000/api/users/search?startsWith=${initial}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+          }
+        }
+      );
+      const data = await response.json();
+      console.log("Fetched users:", data);
+      setRemoteUsers(data);
+    } catch {
+      setRemoteUsers([]);
+    }
+  };
+
+  // 🔵 Filtrado local sobre remoteUsers
+  const filtered = remoteUsers.filter(
     (u) =>
       u.name.toLowerCase().includes(query.toLowerCase()) ||
       u.email.toLowerCase().includes(query.toLowerCase())
@@ -37,7 +73,8 @@ export default function UserSelector({
 
   return (
     <div className="user-selector">
-      {/* TAGS DE SELECCIONADOS */}
+
+      {/* TAGS */}
       <div className="selected-tags">
         {selected.map((u) => (
           <span key={u.id} className="tag">
@@ -51,18 +88,18 @@ export default function UserSelector({
       <input
         className="user-input"
         type="text"
-        placeholder="Buscar persona por nombre o correo..."
+        placeholder="Buscar persona..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
 
-      {/* RESULTADOS */}
+      {/* DROPDOWN */}
       {query.length > 0 && (
         <div className="dropdown">
           {filtered.length === 0 ? (
             <p className="no-results">No hay coincidencias</p>
           ) : (
-            filtered.slice(0, 20).map((u) => (
+            filtered.slice(0, 7).map((u) => (
               <div
                 key={u.id}
                 className="dropdown-item"
