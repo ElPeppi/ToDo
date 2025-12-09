@@ -9,6 +9,7 @@ import PageTransition from "./components/PageTransition";
 import PopupMessage from "./components/pop-ups/message/PopupMessage";
 import VerifyPage from "./pages/loginRegister/VerifyPage";
 import Groups from "./pages/groups/Groups";
+import Settings from "./pages/settings/Settings";
 
 // =========================
 // RUTAS ANIMADAS
@@ -51,6 +52,15 @@ function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
           element={
             <PageTransition>
               <Groups setPopup={setPopup} />
+            </PageTransition>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <PageTransition>
+              <Settings setPopup={setPopup} />
             </PageTransition>
           }
         />
