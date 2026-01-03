@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "./PopupMessage.css";
+import "./popupMessage.css";
 
 interface PopupMessageProps {
   message: string;
