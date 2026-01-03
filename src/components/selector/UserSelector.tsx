@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import "./UserSelector.css";
+import "./userSelector.css";
 import { fetchWithAuth } from "../../services/authService";
 import type { User } from "../../interface/UserInterface";
 
