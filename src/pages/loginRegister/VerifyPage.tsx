@@ -11,7 +11,7 @@ export default function VerifyPage() {
 
     if (!token) return;
 
-    fetch(`https://lhghdq2r-5173.use.devtunnels.ms/api/auth/verify?token=${token}`)
+    fetch(`http://localhost:4000/api/auth/verify?token=${token}`)
       .then(res => res.json())
       .then(data => {
         alert(data.message);

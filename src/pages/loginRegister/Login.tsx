@@ -13,10 +13,45 @@ function LoginPage({setPopup}: {setPopup:Function}) {
     document.documentElement.setAttribute("data-page", "login");
   }, []);
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      try {
+        fetch("https://ckx45bj88h.execute-api.us-east-1.amazonaws.com/api/auth/check-token", {
+          method: "GET",
+          headers: { "Authorization": `Bearer ${accessToken}` },
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.valid) {
+              navigate("/ToDo");
+            } else {
+              fetch("https://ckx45bj88h.execute-api.us-east-1.amazonaws.com/api/auth/refresh", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refreshToken: localStorage.getItem("refreshToken") }),
+              })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.accessToken) {
+                    localStorage.setItem("accessToken", data.accessToken);
+                    navigate("/ToDo");
+                  } else {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                  }
+                });
+            }
+          });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [navigate]);
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      const response = await fetch("https://ckx45bj88h.execute-api.us-east-1.amazonaws.com/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

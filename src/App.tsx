@@ -10,16 +10,22 @@ import PopupMessage from "./components/pop-ups/message/PopupMessage";
 import VerifyPage from "./pages/loginRegister/VerifyPage";
 import Groups from "./pages/groups/Groups";
 import Settings from "./pages/settings/Settings";
+import LogoutListener from "./components/listener/LogoutListener";
+
+
 
 // =========================
 // RUTAS ANIMADAS
 // =========================
+import AppLayout from "./layout/AppLayout";
+
 function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
   const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
+        {/* SIN MENÚ */}
         <Route
           path="/"
           element={
@@ -38,38 +44,42 @@ function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
           }
         />
 
-        <Route
-          path="/ToDo"
-          element={
-            <PageTransition>
-              <ToDo setPopup={setPopup} />
-            </PageTransition>
-          }
-        />
-
-        <Route
-          path="/Groups"
-          element={
-            <PageTransition>
-              <Groups setPopup={setPopup} />
-            </PageTransition>
-          }
-        />
-
-        <Route
-          path="/settings"
-          element={
-            <PageTransition>
-              <Settings setPopup={setPopup} />
-            </PageTransition>
-          }
-        />
-
         <Route path="/verify" element={<VerifyPage />} />
+
+        {/* CON MENÚ (layout) */}
+        <Route element={<AppLayout />}>
+          <Route
+            path="/todo"
+            element={
+              <PageTransition>
+                <ToDo setPopup={setPopup} />
+              </PageTransition>
+            }
+          />
+
+          <Route
+            path="/groups"
+            element={
+              <PageTransition>
+                <Groups setPopup={setPopup} />
+              </PageTransition>
+            }
+          />
+
+          <Route
+            path="/settings"
+            element={
+              <PageTransition>
+                <Settings setPopup={setPopup} />
+              </PageTransition>
+            }
+          />
+        </Route>
       </Routes>
     </AnimatePresence>
   );
 }
+
 
 // =========================
 // APP PRINCIPAL
@@ -79,6 +89,7 @@ export default function App() {
 
   return (
     <Router>
+       <LogoutListener setPopup={setPopup} /> {/* ✅ aquí */}
       {/* POPUP GLOBAL - SIEMPRE ACTIVO */}
       {popup && (
         <PopupMessage

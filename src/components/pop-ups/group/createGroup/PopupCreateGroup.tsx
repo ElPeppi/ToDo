@@ -1,16 +1,12 @@
 import "./popupCreateGroup.css";
-import UserSelector from "../../selector/UserSelector";
+import UserSelector from "../../../selector/UserSelector";
 import React, { useState } from "react";
+import type {User}  from "../../../../interface/UserInterface";
 
 interface PopupCreateGroupProps {
     onClose: () => void;
 }
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
 interface PopupCreateGroupProps {
     onClose: () => void;
     setPopup: Function;

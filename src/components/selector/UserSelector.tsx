@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./UserSelector.css";
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+import { fetchWithAuth } from "../../services/authService";
+import type { User } from "../../interface/UserInterface";
 
 export default function UserSelector({
   selected,
@@ -33,25 +29,22 @@ export default function UserSelector({
 
   // 🔵 Función que consulta al backend
   const fetchUsers = async (initial: string) => {
-    if (!initial) return;
+  if (!initial) return;
 
-    try {
-      console.log("Fetching users starting with:", initial);
-      const response = await fetch(
-        `http://localhost:4000/api/users/search?startsWith=${initial}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-          }
-        }
-      );
-      const data = await response.json();
-      console.log("Fetched users:", data);
-      setRemoteUsers(data);
-    } catch {
-      setRemoteUsers([]);
-    }
-  };
+  try {
+    const response = await fetchWithAuth(
+      `/api/users/search?startsWith=${encodeURIComponent(initial)}`,
+      { method: "GET" }
+    );
+    
+    const data = await response.json();
+    setRemoteUsers(data);
+  } catch (e) {
+    console.error(e);
+    setRemoteUsers([]);
+  }
+};
+
 
   // 🔵 Filtrado local sobre remoteUsers
   const filtered = remoteUsers.filter(

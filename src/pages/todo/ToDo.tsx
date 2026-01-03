@@ -1,60 +1,92 @@
-
 import "../todo/ToDo.css";
-import { useNavigate } from "react-router-dom";
-import PopupCreateGroup from "../../components/pop-ups/group/PopupCreateGroup";
+import PopupCreateGroup from "../../components/pop-ups/group/createGroup/PopupCreateGroup";
+import PopupEditGroup from "../../components/pop-ups/group/editGorup/PopupEditGroup";
+import PopupEditTask from "../../components/pop-ups/tasks/editTasks/EditTask";
 import { useEffect, useState } from "react";
-import Menu from "../../components/menu/Menu";
+import UserSelector from "../../components/selector/UserSelector";
+import type { User } from "../../interface/UserInterface";
+import type { Group } from "../../interface/GroupInterface";
+import type { Task } from "../../interface/TaskInterface";
+import { fetchWithAuth } from "../../services/authService";
 
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
+
 function ToDo({ setPopup }: { setPopup: Function }) {
-    const [tasks, setTasks] = useState<any[]>([]);
-    const [tittle, setTittle] = useState("");
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
-    const [groupName, setGroupName] = useState("");
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const [members, setMembers] = useState<User[]>([]);
+    const [groupId, setGroupId] = useState<number | null>(null);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
-    const [groups, setGroups] = useState<any[]>([]);
-    const fetchGroups = async () => {
-        const response = await fetch("http://localhost:4000/api/groups", {
-            headers: {
-                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-            }
-        });
+    const [showEditGroup, setShowEditGroup] = useState(false);
+    const [showEditTask, setShowEditTask] = useState(false);
+    const [groups, setGroups] = useState<Group[]>([]);
 
-        const data = await response.json();
-        console.log("Fetched groups:", data);
-        if (response.ok) {
-            setGroups(data);
+    const fetchGroups = async () => {
+        try {
+            const response = await fetchWithAuth("/api/groups");
+            const data = await response.json();
+            console.log(data);
+            if (response.ok) {
+                setGroups(data);
+            } else {
+                setPopup({ message: "Error al cargar grupos", type: "error" });
+            }
+        } catch (e) {
+            console.error(e);
+            setPopup({ message: "Sesión expirada", type: "info" });
         }
     };
 
+    const fetchUpdateTask = async () => {
+        try {
+            const response = await fetchWithAuth("/api/tasks");
+            const data = await response.json();
+
+            if (response.ok) {
+                setTasks(data);
+            } else {
+                setPopup({ message: "Error al cargar tareas", type: "error" });
+            }
+        } catch (e) {
+            console.error(e);
+            setPopup({ message: "Sesión expirada", type: "info" });
+        }
+    };
+
+    useEffect(() => {
+        const onTokenRefreshed = () => {
+            fetchGroups();
+            fetchUpdateTask();
+        };
+
+        window.addEventListener("app:token-refreshed", onTokenRefreshed);
+
+        return () => {
+            window.removeEventListener("app:token-refreshed", onTokenRefreshed);
+        };
+    }, []);
 
     useEffect(() => {
         document.documentElement.setAttribute("data-page", "todo");
         fetchGroups();
+
         const fetchTasks = async () => {
             try {
-                const response = await fetch("http://localhost:4000/api/tasks", {
-                    headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                });
+                const response = await fetchWithAuth("/api/tasks");
 
                 const data = await response.json();
                 console.log(data);
                 if (response.ok) {
-                    setTasks(data); // 🟢 adapta al nombre exacto en BD
+                    setTasks(data);
                 } else {
                     setPopup({ message: "Error al cargar tareas", type: "error" });
                 }
             } catch (error) {
-                setPopup({ message: "Error de conexión con el servidor", type: "error" });
+                // ⬇️ aquí entra si el refresh falló → logout automático
+                console.error(error);
+                setPopup({ message: "Sesión expirada", type: "info" });
             }
         };
 
@@ -62,47 +94,43 @@ function ToDo({ setPopup }: { setPopup: Function }) {
     }, []);
 
     const addTask = async () => {
-        if (tittle.trim() === "") return;
+        if (title.trim() === "") return;
+
         try {
-            const response = await fetch("http://localhost:4000/api/tasks", {
+            const response = await fetchWithAuth("/api/tasks", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-                },
                 body: JSON.stringify({
-                    title: tittle,         // 👈 debe coincidir con el backend
-                    description: description,
-                    dueDate: dueDate,
+                    title: title,
+                    description,
+                    dueDate,
+                    groupId,
+                    members: members.map(u => u.id),
                 }),
-
             });
-            const data = await response.json();
-            if (response.ok) {
 
-                setTasks([...tasks, tittle]);
-                setTittle("");
+            const data = await response.json();
+
+            if (response.ok) {
+                setTasks(prev => [...prev, data]);
+                setTitle("");
                 setDescription("");
                 setDueDate("");
                 setPopup({ message: "Tarea agregada exitosamente!", type: "success" });
             } else {
                 setPopup({ message: data.message || "Error al agregar tarea", type: "error" });
             }
-        } catch (error) {
-            setPopup({ message: "Error al agregar tarea", type: "error" });
+        } catch (e) {
+            console.error(e);
+            setPopup({ message: "Sesión expirada", type: "info" });
         }
     };
-
 
     const removeTask = async (index: number) => {
         const taskId = tasks[index].id;
 
         try {
-            const response = await fetch(`http://localhost:4000/api/tasks/${taskId}`, {
+            const response = await fetchWithAuth(`/api/tasks/${taskId}`, {
                 method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-                },
             });
 
             const data = await response.json();
@@ -112,25 +140,16 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 return;
             }
 
-            // Quitar tarea del estado
             setTasks(tasks.filter((_, i) => i !== index));
             setPopup({ message: "Tarea eliminada!", type: "success" });
-
-        } catch (error) {
-            setPopup({ message: "Error de conexión al eliminar", type: "error" });
+        } catch (e) {
+            console.error(e);
+            setPopup({ message: "Sesión expirada", type: "info" });
         }
     };
 
-    useEffect(() => {
-        document.documentElement.setAttribute("data-page", "todo");
-    }, []);
-
-    const navigate = useNavigate();
-
     const handleLogout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/");
+        window.dispatchEvent(new Event("app:logout"));
     };
 
     return (<>
@@ -145,12 +164,28 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                     Logout
                 </button>
             </header>
-            <Menu />
             {showCreateGroup && (
                 <PopupCreateGroup
                     onClose={() => setShowCreateGroup(false)}
                     setPopup={setPopup}
                     onGroupCreated={fetchGroups}  // LO AÑADIREMOS LUEGO
+                />
+            )}
+            {
+                showEditGroup && (
+                    <PopupEditGroup
+                        onClose={() => setShowEditGroup(false)}
+                        setPopup={setPopup}
+                        onGroupUpdated={fetchGroups}  // LO AÑADIREMOS LUEGO
+                        groups={groups}
+                    />
+                )
+            }
+            {showEditTask && (
+                <PopupEditTask
+                    onClose={() => setShowEditTask(false)}
+                    setPopup={setPopup}
+                    onTastkUpdated={fetchUpdateTask}
                 />
             )}
 
@@ -161,11 +196,10 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                     <input
                         type="text"
                         placeholder="Titulo de la tarea..."
-                        value={tittle}
-                        onChange={e => setTittle(e.target.value)}
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
                     />
-                    <input
-                        type="text"
+                    <textarea
                         placeholder="Descripción de la tarea..."
                         value={description}
                         onChange={e => setDescription(e.target.value)}
@@ -175,13 +209,20 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                         value={dueDate}
                         onChange={e => setDueDate(e.target.value)}
                     />
-                    <select name="Grupos" id="GruposSelect">
+                    <UserSelector
+                        selected={members}
+                        setSelected={setMembers}
+                    />
+                    <select
+                        name="Grupos"
+                        id="GruposSelect"
+                        onChange={e => setGroupId(Number(e.target.value))}>
                         <option value="">Selecciona un grupo</option>
                         {groups.map((g) => (
-                            <option key={g.id} value={g.id}>{g.nombre}</option>
+                            <option key={g.id} value={g.id}>{g.name}</option>
                         ))}
                     </select>
-
+                    <button onClick={() => setShowEditGroup(true)}>Editar Grupo</button>
                     <button onClick={() => setShowCreateGroup(true)}>Crear Grupo</button>
                     <button onClick={addTask}>+</button>
 
@@ -189,12 +230,19 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
                 <ul className="todo-list">
                     {tasks.map((task: any, i: number) => (
-                        <li key={i} className="todo-item">
+                        <li key={task.id} className="todo-item">
                             <div>
-                                <h3>{task.titulo}</h3>
-                                <p>{task.descripcion}</p>
-                                <small>Vence: {task.fecha_vencimiento?.split("T")[0]}</small>
+                                <h3>{task.title}</h3>
+                                <p>{task.description}</p>
+                                <p>{groups.map((g) => (
+                                    g.id == task.group_id ? g.name : ""
+                                ))}</p>
+                                <p>{task.status}</p>
+                                <small>Vence: {task.dueDate?.split("T")[0]}</small>
                             </div>
+                            <button onClick={() => setShowEditTask(true)} className="edit-btn">
+
+                            </button>
                             <button onClick={() => removeTask(i)} className="delete-btn">
                                 ✖
                             </button>
