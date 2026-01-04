@@ -1,12 +1,16 @@
-// src/services/authService.ts
 const API_URL = "https://ckx45bj88h.execute-api.us-east-1.amazonaws.com";
 
-// src/services/authService.ts
 export const logout = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   window.dispatchEvent(new Event("app:logout"));
 };
+
+const buildHeaders = (base: RequestInit["headers"], accessToken: string) => ({
+  ...(base || {}),
+  Authorization: `Bearer ${accessToken}`,
+  "Content-Type": "application/json",
+});
 
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
   let accessToken = localStorage.getItem("accessToken");
@@ -14,24 +18,18 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
 
   if (!accessToken) throw new Error("No hay token activo");
 
-  options.headers = {
-    ...(options.headers || {}),
-    Authorization: `Bearer ${accessToken}`,
-    "Content-Type": "application/json",
-  };
+  options.headers = buildHeaders(options.headers, accessToken);
 
   let response = await fetch(`${API_URL}${endpoint}`, options);
 
-  // 👇 refresca con 401 o 403
   if ((response.status === 401 || response.status === 403) && refreshToken) {
-    const refreshRes = await fetch(`${API_URL}/api/auth/refresh`, { // ✅ AQUÍ
+    const refreshRes = await fetch(`${API_URL}/api/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: refreshToken }),
     });
 
     if (!refreshRes.ok) {
-      console.log("Refresh token inválido, cerrando sesión");
       logout();
       throw new Error("Sesión expirada");
     }
@@ -41,13 +39,10 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
 
     accessToken = data.accessToken;
     if (accessToken) localStorage.setItem("accessToken", accessToken);
-    
     window.dispatchEvent(new Event("app:token-refreshed"));
 
-    options.headers = {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${accessToken}`,
-    };
+    // 🔥 IMPORTANTE: vuelve a poner headers completos, no solo Authorization
+    if (accessToken) options.headers = buildHeaders(options.headers, accessToken);
 
     response = await fetch(`${API_URL}${endpoint}`, options);
   }
