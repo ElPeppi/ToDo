@@ -118,7 +118,8 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 console.log(data);
                 setPopup({ message: "Tarea agregada exitosamente!", type: "success" });
             } else {
-                setPopup({ message: data.message || "Error al agregar tarea", type: "error" });
+                console.log("API error:", data); // <-- esto
+                setPopup({ message: data.sqlMessage || data.message || "Error al agregar tarea", type: "error" });
             }
         } catch (e) {
             console.error(e);
