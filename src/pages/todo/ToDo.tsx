@@ -95,7 +95,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
     const addTask = async () => {
         if (title.trim() === "") return;
-
+        console.log({ title, description, dueDate, groupId, members });
         try {
             const response = await fetchWithAuth("/api/tasks", {
                 method: "POST",
