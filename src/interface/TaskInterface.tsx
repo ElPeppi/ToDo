@@ -1,10 +1,13 @@
+import type { User } from "./UserInterface";
+
 export interface Task {
     id: number;
-    tittle: string;
+    title: string;
+    createdBy: string;
     description: string;
     createdDate: string;
     dueDate: string;
     status: "pending" | "in-progress" | "completed";
     groupId?: number;
-    members?: number[]; // Array of User IDs
+    members?: User[]; // Array of User 
 }

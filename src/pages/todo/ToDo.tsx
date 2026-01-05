@@ -8,6 +8,7 @@ import type { User } from "../../interface/UserInterface";
 import type { Group } from "../../interface/GroupInterface";
 import type { Task } from "../../interface/TaskInterface";
 import { fetchWithAuth } from "../../services/authService";
+import { handleLogout } from "../../utils/HandelLogout";
 
 
 
@@ -27,7 +28,6 @@ function ToDo({ setPopup }: { setPopup: Function }) {
         try {
             const response = await fetchWithAuth("/api/groups");
             const data = await response.json();
-            console.log(data);
             if (response.ok) {
                 setGroups(data);
             } else {
@@ -36,6 +36,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
         } catch (e) {
             console.error(e);
             setPopup({ message: "Sesión expirada", type: "info" });
+            handleLogout();
         }
     };
 
@@ -52,6 +53,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
         } catch (e) {
             console.error(e);
             setPopup({ message: "Sesión expirada", type: "info" });
+            handleLogout();
         }
     };
 
@@ -77,7 +79,6 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 const response = await fetchWithAuth("/api/tasks");
 
                 const data = await response.json();
-                console.log(data);
                 if (response.ok) {
                     setTasks(data);
                 } else {
@@ -87,6 +88,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 // ⬇️ aquí entra si el refresh falló → logout automático
                 console.error(error);
                 setPopup({ message: "Sesión expirada", type: "info" });
+                handleLogout();
             }
         };
 
@@ -95,7 +97,6 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
     const addTask = async () => {
         if (title.trim() === "") return;
-        console.log({ title, description, dueDate, groupId, members });
         try {
             const response = await fetchWithAuth("/api/tasks", {
                 method: "POST",
@@ -112,18 +113,18 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
             if (response.ok) {
                 setTasks(prev => [...prev, data]);
+                
                 setTitle("");
                 setDescription("");
                 setDueDate("");
-                console.log(data);
                 setPopup({ message: "Tarea agregada exitosamente!", type: "success" });
             } else {
-                console.log("API error:", data); // <-- esto
-                setPopup({ message: data.sqlMessage || data.message || "Error al agregar tarea", type: "error" });
+                setPopup({ message: data.message || "Error al agregar tarea", type: "error" });
             }
         } catch (e) {
             console.error(e);
             setPopup({ message: "Sesión expirada", type: "info" });
+            handleLogout();
         }
     };
 
@@ -147,11 +148,8 @@ function ToDo({ setPopup }: { setPopup: Function }) {
         } catch (e) {
             console.error(e);
             setPopup({ message: "Sesión expirada", type: "info" });
+            handleLogout();
         }
-    };
-
-    const handleLogout = () => {
-        window.dispatchEvent(new Event("app:logout"));
     };
 
     return (<>
@@ -235,10 +233,24 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                         <li key={task.id} className="todo-item">
                             <div>
                                 <h3>{task.title}</h3>
+                                <p>{task.createdBy}</p>
                                 <p>{task.description}</p>
                                 <p>{groups.map((g) => (
                                     g.id == task.group_id ? g.name : ""
                                 ))}</p>
+                                {task.members && task.members.length > 0 && (
+                                    <div>
+                                        <strong>Miembros:</strong>
+                                        <ul>
+                                            {task.members.map((memberId: number) => {
+                                                
+                                                const member = members.find(m => m.id === memberId);
+                                                
+                                                return member ? <li key={member.id}>{member.name}</li> : null;
+                                            })}
+                                        </ul>
+                                    </div>
+                                )}
                                 <p>{task.status}</p>
                                 <small>Vence: {task.dueDate?.split("T")[0]}</small>
                             </div>

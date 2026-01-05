@@ -2,6 +2,7 @@ import "./popupCreateGroup.css";
 import UserSelector from "../../../selector/UserSelector";
 import React, { useState } from "react";
 import type {User}  from "../../../../interface/UserInterface";
+import { fetchWithAuth } from "../../../../services/authService";
 
 interface PopupCreateGroupProps {
     onClose: () => void;
@@ -19,7 +20,7 @@ const PopupCreateGroup: React.FC<PopupCreateGroupProps> = ({ onClose, setPopup, 
 
     const handleCreateGroup = async () => {
         try {
-            const response = await fetch("http://localhost:4000/api/groups", {
+            const response = await fetchWithAuth("/api/groups", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

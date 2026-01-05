@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchWithAuth } from "../../services/authService";
 import type { Group } from "../../interface/GroupInterface";
+import { handleLogout } from "../../utils/HandelLogout";
 
 function Groups({ setPopup }: { setPopup: Function }) {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -23,6 +24,7 @@ function Groups({ setPopup }: { setPopup: Function }) {
     } catch (e) {
       console.error(e);
       setPopup({ message: "Sesión expirada", type: "info" });
+      handleLogout();
     }
   };
   return (<>
