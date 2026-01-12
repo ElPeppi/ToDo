@@ -1,28 +1,30 @@
 import "../todo/ToDo.css";
 import PopupCreateGroup from "../../components/pop-ups/group/createGroup/PopupCreateGroup";
 import PopupEditGroup from "../../components/pop-ups/group/editGorup/PopupEditGroup";
-import PopupEditTask from "../../components/pop-ups/tasks/editTasks/EditTask";
+import PopupEditTask from "../../components/pop-ups/editTasks/EditTask";
 import { useEffect, useState } from "react";
 import UserSelector from "../../components/selector/UserSelector";
-import type { User } from "../../interface/UserInterface";
-import type { Group } from "../../interface/GroupInterface";
-import type { Task } from "../../interface/TaskInterface";
+import type { UserInterface } from "../../interface/UserInterface";
+import type { GroupInterface } from "../../interface/GroupInterface";
+import type { TaskInterface } from "../../interface/TaskInterface";
+import TaskCard from "../../components/task/TaskCard";
 import { fetchWithAuth } from "../../services/authService";
 import { handleLogout } from "../../utils/HandelLogout";
 
 
 
 function ToDo({ setPopup }: { setPopup: Function }) {
-    const [tasks, setTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<TaskInterface[]>([]);
+    const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
-    const [members, setMembers] = useState<User[]>([]);
+    const [members, setMembers] = useState<UserInterface[]>([]);
     const [groupId, setGroupId] = useState<number | null>(null);
     const [showCreateGroup, setShowCreateGroup] = useState(false);
     const [showEditGroup, setShowEditGroup] = useState(false);
     const [showEditTask, setShowEditTask] = useState(false);
-    const [groups, setGroups] = useState<Group[]>([]);
+    const [groups, setGroups] = useState<GroupInterface[]>([]);
 
     const fetchGroups = async () => {
         try {
@@ -79,6 +81,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 const response = await fetchWithAuth("/api/tasks");
 
                 const data = await response.json();
+                console.log(data);
                 if (response.ok) {
                     setTasks(data);
                 } else {
@@ -113,7 +116,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
             if (response.ok) {
                 setTasks(prev => [...prev, data]);
-                
+
                 setTitle("");
                 setDescription("");
                 setDueDate("");
@@ -155,15 +158,14 @@ function ToDo({ setPopup }: { setPopup: Function }) {
     return (<>
 
         <div className="todo-page">
-            <header className="todo-header">
-                <h1>To-Do List</h1>
-                <button
-                    onClick={() => { handleLogout(); }}
-                    className="logout-btn"
-                >
-                    Logout
-                </button>
-            </header>
+            <h1>To-Do List</h1>
+            <button
+                onClick={() => { handleLogout(); }}
+                className="logout-btn"
+            >
+                Logout
+            </button>
+
             {showCreateGroup && (
                 <PopupCreateGroup
                     onClose={() => setShowCreateGroup(false)}
@@ -181,13 +183,18 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                     />
                 )
             }
-            {showEditTask && (
+            {showEditTask && editingTaskId !== null && (
                 <PopupEditTask
-                    onClose={() => setShowEditTask(false)}
+                    onClose={() => {
+                        setShowEditTask(false);
+                        setEditingTaskId(null);
+                    }}
                     setPopup={setPopup}
                     onTastkUpdated={fetchUpdateTask}
+                    taskId={editingTaskId}
                 />
             )}
+
 
 
             <div className="todo-container">
@@ -231,36 +238,17 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                 <ul className="todo-list">
                     {tasks.map((task: any, i: number) => (
                         <li key={task.id} className="todo-item">
-                            <div>
-                                <h3>{task.title}</h3>
-                                <p>{task.createdBy}</p>
-                                <p>{task.description}</p>
-                                <p>{groups.map((g) => (
-                                    g.id == task.group_id ? g.name : ""
-                                ))}</p>
-                                {task.members && task.members.length > 0 && (
-                                    <div>
-                                        <strong>Miembros:</strong>
-                                        <ul>
-                                            {task.members.map((memberId: number) => {
-                                                
-                                                const member = members.find(m => m.id === memberId);
-                                                
-                                                return member ? <li key={member.id}>{member.name}</li> : null;
-                                            })}
-                                        </ul>
-                                    </div>
-                                )}
-                                <p>{task.status}</p>
-                                <small>Vence: {task.dueDate?.split("T")[0]}</small>
-                            </div>
-                            <button onClick={() => setShowEditTask(true)} className="edit-btn">
-
-                            </button>
-                            <button onClick={() => removeTask(i)} className="delete-btn">
-                                ✖
-                            </button>
+                            <TaskCard
+                                task={task}
+                                groups={groups}
+                                onEdit={() => {
+                                    setEditingTaskId(task.id);
+                                    setShowEditTask(true);
+                                }}
+                                onDelete={() => removeTask(i)}
+                            />
                         </li>
+
                     ))}
                 </ul>
 

@@ -1,7 +1,7 @@
 import "./popupEditGroup.css";
 import React, { useEffect, useState } from "react";
 import UserSelector from "../../../selector/UserSelector";
-import type {User}  from "../../../../interface/UserInterface";
+import type {UserInterface}  from "../../../../interface/UserInterface";
 
 interface EditGroupProps {
     onClose: () => void;
@@ -12,7 +12,7 @@ interface EditGroupProps {
 
 const PopupEditGroup: React.FC<EditGroupProps> = ({ onClose, setPopup, onGroupUpdated,groups }) => {
     const [groupss, setGroups] = useState<any[]>([]);
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<UserInterface[]>([]);
     useEffect(() => {
         setGroups(groups);
     }, [groups]);

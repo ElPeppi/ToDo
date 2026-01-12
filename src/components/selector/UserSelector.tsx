@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import "./userSelector.css";
 import { fetchWithAuth } from "../../services/authService";
-import type { User } from "../../interface/UserInterface";
+import type { UserInterface } from "../../interface/UserInterface";
 
 export default function UserSelector({
   selected,
   setSelected
 }: {
-  selected: User[];
-  setSelected: (users: User[]) => void;
+  selected: UserInterface[];
+  setSelected: (users: UserInterface[]) => void;
 }) {
   const [query, setQuery] = useState("");
-  const [remoteUsers, setRemoteUsers] = useState<User[]>([]);
+  const [remoteUsers, setRemoteUsers] = useState<UserInterface[]>([]);
   const lastInitial = useRef("");
 
   // 🔵 Pedir usuarios SOLO cuando se escribe la primera letra
@@ -53,7 +53,7 @@ export default function UserSelector({
       u.email.toLowerCase().includes(query.toLowerCase())
   );
 
-  const handleSelect = (user: User) => {
+  const handleSelect = (user: UserInterface) => {
     if (!selected.find((s) => s.id === user.id)) {
       setSelected([...selected, user]);
     }

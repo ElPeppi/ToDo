@@ -1,10 +1,10 @@
-import type { Task } from "./TaskInterface";
-import type { User } from "./UserInterface";
+import type { TaskInterface } from "./TaskInterface";
+import type { UserInterface } from "./UserInterface";
 
-export interface Group {
+export interface GroupInterface {
   id: number;
   name: string;
   description?: string;
-  members: User[];
-  taks: Task[];
+  members: UserInterface[];
+  tasks: TaskInterface[];
 }

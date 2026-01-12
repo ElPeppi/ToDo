@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { fetchWithAuth } from "../../services/authService";
-import type { Group } from "../../interface/GroupInterface";
+import type { GroupInterface } from "../../interface/GroupInterface";
 import { handleLogout } from "../../utils/HandelLogout";
+import GroupCard from "../../components/group/GroupCard";
 
 function Groups({ setPopup }: { setPopup: Function }) {
-  const [groups, setGroups] = useState<Group[]>([]);
+  const [groups, setGroups] = useState<GroupInterface[]>([]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-page", "groups");
@@ -33,10 +34,7 @@ function Groups({ setPopup }: { setPopup: Function }) {
       <div className="groups-list">
         {groups.length === 0 ? ( <p>No hay grupos disponibles.</p> ) : (
           groups.map((group) => (
-            <div key={group.id} className="group-item">
-              <h2>{group.name}</h2>
-              <p>{group.description}</p>
-            </div>
+            <GroupCard key={group.id} task={group} groups={groups} />
           ))
         )}
       </div>

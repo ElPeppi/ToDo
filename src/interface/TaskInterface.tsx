@@ -1,6 +1,6 @@
-import type { User } from "./UserInterface";
+import type { UserInterface } from "./UserInterface";
 
-export interface Task {
+export interface TaskInterface {
     id: number;
     title: string;
     createdBy: string;
@@ -8,6 +8,6 @@ export interface Task {
     createdDate: string;
     dueDate: string;
     status: "pending" | "in-progress" | "completed";
-    groupId?: number;
-    members?: User[]; // Array of User 
+    group_id?: number;
+    members?: UserInterface[]; // Array of User 
 }

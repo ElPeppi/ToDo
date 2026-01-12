@@ -1,7 +1,7 @@
 import "./popupCreateGroup.css";
 import UserSelector from "../../../selector/UserSelector";
 import React, { useState } from "react";
-import type {User}  from "../../../../interface/UserInterface";
+import type {UserInterface}  from "../../../../interface/UserInterface";
 import { fetchWithAuth } from "../../../../services/authService";
 
 interface PopupCreateGroupProps {
@@ -16,7 +16,7 @@ interface PopupCreateGroupProps {
 
 const PopupCreateGroup: React.FC<PopupCreateGroupProps> = ({ onClose, setPopup, onGroupCreated }) => {
     const [groupName, setGroupName] = useState("");
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<UserInterface[]>([]);
 
     const handleCreateGroup = async () => {
         try {

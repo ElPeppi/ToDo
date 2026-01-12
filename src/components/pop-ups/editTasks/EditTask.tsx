@@ -1,39 +1,40 @@
 import "./editTask.css";
 import React, { useState } from "react";
+import { fetchWithAuth } from "../../../services/authService";
 
 interface EditTaskProps {
+    taskId: number;
     onClose: () => void;
     setPopup: Function;
     onTastkUpdated: () => void;
 }
 
-const EditTask: React.FC<EditTaskProps> = ({ onClose, setPopup, onTastkUpdated }) => {
+const EditTask: React.FC<EditTaskProps> = ({ taskId, onClose, setPopup, onTastkUpdated }) => {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDescription, setTaskDescription] = useState("");
     const [taskDueDate, setTaskDueDate] = useState("");
+
     const handleEditTask = async () => {
+        console.log("Editing task:", taskId, taskTitle, taskDescription, taskDueDate);  
         try {
-            const response = await fetch("http://localhost:4000/api/tasks", {
+            const response = await fetchWithAuth(`/api/tasks/${taskId}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-                },
                 body: JSON.stringify({
                     title: taskTitle,
                     description: taskDescription,
-                    dueDate: taskDueDate
-                })
+                    dueDate: taskDueDate,
+                    estado: "pending",
+                }),
             });
+
             const data = await response.json();
 
             if (!response.ok) {
                 setPopup({ message: data.message || "Error al editar la tarea", type: "error" });
                 return;
             }
-            // ✔️ Mostrar popup
+
             setPopup({ message: "Tarea editada con éxito!", type: "success" });
-            // ✔️ Refrescar la lista de tareas en ToDo
             onTastkUpdated();
             onClose();
         } catch (error) {
