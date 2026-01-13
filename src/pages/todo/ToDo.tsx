@@ -1,15 +1,22 @@
 import "../todo/ToDo.css";
+
+import { useEffect, useState } from "react";
+
 import PopupCreateGroup from "../../components/pop-ups/group/createGroup/PopupCreateGroup";
 import PopupEditGroup from "../../components/pop-ups/group/editGorup/PopupEditGroup";
 import PopupEditTask from "../../components/pop-ups/editTasks/EditTask";
-import { useEffect, useState } from "react";
+
 import UserSelector from "../../components/selector/UserSelector";
+
+import TaskCard from "../../components/task/TaskCard";
+
 import type { UserInterface } from "../../interface/UserInterface";
 import type { GroupInterface } from "../../interface/GroupInterface";
 import type { TaskInterface } from "../../interface/TaskInterface";
-import TaskCard from "../../components/task/TaskCard";
+
 import { fetchWithAuth } from "../../services/authService";
 import { handleLogout } from "../../utils/HandelLogout";
+
 
 
 
@@ -97,6 +104,26 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
         fetchTasks();
     }, []);
+    useEffect(() => {
+        const handler = (e: any) => {
+            const msg = e.detail;
+            console.log("Mensaje WS recibido en ToDo:", msg);
+            if (msg.type === "task:created" && msg.task) {
+                const task = msg.task as TaskInterface;
+
+                setTasks(prev =>
+                    prev.some(t => t.id === task.id) ? prev : [task, ...prev]
+                );
+
+                setPopup({ message: "Te asignaron una nueva tarea ✅", type: "info" });
+            }
+        };
+
+        window.addEventListener("app:ws-message", handler);
+        return () => window.removeEventListener("app:ws-message", handler);
+    }, []);
+
+
 
     const addTask = async () => {
         if (title.trim() === "") return;

@@ -1,4 +1,4 @@
-const API_URL = "https://ckx45bj88h.execute-api.us-east-1.amazonaws.com";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const logout = () => {
   localStorage.removeItem("accessToken");
@@ -15,13 +15,20 @@ const buildHeaders = (base: RequestInit["headers"], accessToken: string) => ({
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
   let accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
-
+  console.log("Usando fetchWithAuth para", API_URL);
   if (!accessToken) throw new Error("No hay token activo");
 
   options.headers = buildHeaders(options.headers, accessToken);
-
-  let response = await fetch(`${API_URL}${endpoint}`, options);
-
+  let response;
+  try
+  {
+    
+  response = await fetch(`${API_URL}${endpoint}`, options);
+  
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw error;
+  }
   if ((response.status === 401 || response.status === 403) && refreshToken) {
     const refreshRes = await fetch(`${API_URL}/api/auth/refresh`, {
       method: "POST",

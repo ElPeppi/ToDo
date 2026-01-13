@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./LoginRegister.css";
-
+const API_URL = import.meta.env.VITE_API_URL;
 
 function LoginPage({setPopup}: {setPopup:Function}) {
   const navigate = useNavigate();
@@ -14,10 +14,11 @@ function LoginPage({setPopup}: {setPopup:Function}) {
   }, []);
 
   useEffect(() => {
+    console.log(API_URL)
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
       try {
-        fetch("https://ckx45bj88h.execute-api.us-east-1.amazonaws.com/api/auth/check-token", {
+        fetch(`${API_URL}/api/auth/check-token`, {
           method: "GET",
           headers: { "Authorization": `Bearer ${accessToken}` },
         })
@@ -26,7 +27,7 @@ function LoginPage({setPopup}: {setPopup:Function}) {
             if (data.valid) {
               navigate("/ToDo");
             } else {
-              fetch("https://ckx45bj88h.execute-api.us-east-1.amazonaws.com/api/auth/refresh", {
+              fetch(`${API_URL}/api/auth/refresh`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ refreshToken: localStorage.getItem("refreshToken") }),
@@ -51,7 +52,7 @@ function LoginPage({setPopup}: {setPopup:Function}) {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://ckx45bj88h.execute-api.us-east-1.amazonaws.com/api/auth/login", {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

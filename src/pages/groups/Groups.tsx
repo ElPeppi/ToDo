@@ -3,6 +3,7 @@ import { fetchWithAuth } from "../../services/authService";
 import type { GroupInterface } from "../../interface/GroupInterface";
 import { handleLogout } from "../../utils/HandelLogout";
 import GroupCard from "../../components/group/GroupCard";
+import { p } from "framer-motion/client";
 
 function Groups({ setPopup }: { setPopup: Function }) {
   const [groups, setGroups] = useState<GroupInterface[]>([]);
@@ -33,9 +34,10 @@ function Groups({ setPopup }: { setPopup: Function }) {
       <h1>Grupos</h1>
       <div className="groups-list">
         {groups.length === 0 ? ( <p>No hay grupos disponibles.</p> ) : (
-          groups.map((group) => (
-            <GroupCard key={group.id} task={group} groups={groups} />
-          ))
+          //groups.map((group) => (
+            //<GroupCard key={group.id} task={group} groups={groups} />
+          //))
+          <p> debugin</p>
         )}
       </div>
     </div>
