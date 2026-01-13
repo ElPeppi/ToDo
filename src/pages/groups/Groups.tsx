@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { fetchWithAuth } from "../../services/authService";
 import type { GroupInterface } from "../../interface/GroupInterface";
 import { handleLogout } from "../../utils/HandelLogout";
-import GroupCard from "../../components/group/GroupCard";
-import { p } from "framer-motion/client";
+//import GroupCard from "../../components/group/GroupCard";
+
 
 function Groups({ setPopup }: { setPopup: Function }) {
   const [groups, setGroups] = useState<GroupInterface[]>([]);
