@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./LoginRegister.css";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function RegisterPage({setPopup}: {setPopup:Function}) {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ function RegisterPage({setPopup}: {setPopup:Function}) {
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await fetch("https://lhghdq2r-4000.use.devtunnels.ms/api/auth/register", {
+            const response = await fetch(`${API_URL}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

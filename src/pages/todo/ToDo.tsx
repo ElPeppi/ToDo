@@ -104,6 +104,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
         fetchTasks();
     }, []);
+
     useEffect(() => {
         const handler = (e: any) => {
             const msg = e.detail;
@@ -115,8 +116,14 @@ function ToDo({ setPopup }: { setPopup: Function }) {
                     prev.some(t => t.id === task.id) ? prev : [task, ...prev]
                 );
 
-                setPopup({ message: "Te asignaron una nueva tarea ✅", type: "info" });
+                setPopup({ message: "Te asignaron una nueva tarea", type: "info" });
             }
+            if ( msg.type === "task:deleted" && msg.taskId) {
+                const taskId = msg.taskId as number;
+                setTasks(prev => prev.filter(t => t.id !== taskId));
+                setPopup({ message: "Una tarea fue eliminada", type: "info" });
+            }
+
         };
 
         window.addEventListener("app:ws-message", handler);

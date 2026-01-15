@@ -1,6 +1,8 @@
 import "./editTask.css";
 import React, { useState } from "react";
 import { fetchWithAuth } from "../../../services/authService";
+import UserSelector from "../../selector/UserSelector";
+import type { UserInterface } from "../../../interface/UserInterface";
 
 interface EditTaskProps {
     taskId: number;
@@ -13,9 +15,10 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId, onClose, setPopup, onTastkU
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDescription, setTaskDescription] = useState("");
     const [taskDueDate, setTaskDueDate] = useState("");
+    const [members, setMembers] = useState<UserInterface[]>([]);
 
     const handleEditTask = async () => {
-        console.log("Editing task:", taskId, taskTitle, taskDescription, taskDueDate);  
+        console.log("Editing task:", taskId, taskTitle, taskDescription, taskDueDate);
         try {
             const response = await fetchWithAuth(`/api/tasks/${taskId}`, {
                 method: "PUT",
@@ -24,6 +27,7 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId, onClose, setPopup, onTastkU
                     description: taskDescription,
                     dueDate: taskDueDate,
                     estado: "pending",
+                    members: members.map((member) => member.id),
                 }),
             });
 
@@ -61,6 +65,10 @@ const EditTask: React.FC<EditTaskProps> = ({ taskId, onClose, setPopup, onTastkU
                 type="date"
                 value={taskDueDate}
                 onChange={(e) => setTaskDueDate(e.target.value)}
+            />
+            <UserSelector
+                selected={members}
+                setSelected={setMembers}
             />
             <button onClick={handleEditTask}>Guardar Cambios</button>
         </div>
