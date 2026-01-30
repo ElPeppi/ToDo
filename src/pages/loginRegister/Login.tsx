@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import "./LoginRegister.css";
 const API_URL = import.meta.env.VITE_API_URL;
 
-function LoginPage({setPopup}: {setPopup:Function}) {
+function LoginPage({ setPopup }: { setPopup: Function }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
 
   useEffect(() => {
     document.documentElement.setAttribute("data-page", "login");
@@ -62,13 +62,15 @@ function LoginPage({setPopup}: {setPopup:Function}) {
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
+        localStorage.setItem("userId", String(data.user.id));
+        localStorage.setItem("user", JSON.stringify(data.user));
         setPopup({ message: "Login successful!", type: "success" });
         navigate("/ToDo");
       } else {
         setPopup({ message: data.message || "Login failed", type: "error" });
       }
-      } catch (error) {
-        setPopup({ message: "An error occurred during login", type: "error" });
+    } catch (error) {
+      setPopup({ message: "An error occurred during login", type: "error" });
     }
   };
 

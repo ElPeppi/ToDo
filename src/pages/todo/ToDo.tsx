@@ -118,10 +118,46 @@ function ToDo({ setPopup }: { setPopup: Function }) {
 
                 setPopup({ message: "Te asignaron una nueva tarea", type: "info" });
             }
-            if ( msg.type === "task:deleted" && msg.taskId) {
+            if (msg.type === "task:deleted" && msg.taskId) {
                 const taskId = msg.taskId as number;
                 setTasks(prev => prev.filter(t => t.id !== taskId));
                 setPopup({ message: "Una tarea fue eliminada", type: "info" });
+            }
+            if (msg.type === "task:updated" && msg.task) {
+                const updatedTask = msg.task as TaskInterface;
+                const taskId = updatedTask.id;
+
+                const newIds = Array.isArray(msg.newCollaboratorIds) ? msg.newCollaboratorIds : [];
+                const prevIds = Array.isArray(msg.previousCollaboratorIds) ? msg.previousCollaboratorIds : [];
+
+                const currentUserId = parseInt(localStorage.getItem("userId") || "0", 10)   ;
+
+                const wasInvolvedBefore = prevIds.includes(currentUserId);
+                const isInvolvedNow = newIds.includes(currentUserId);
+
+                // Si te agregaron, la insertamos si no está
+                console.log({ wasInvolvedBefore, isInvolvedNow });
+                if (!wasInvolvedBefore && isInvolvedNow) {
+                    setPopup({ message: "Fuiste agregado a una tarea", type: "info" });
+
+                    setTasks(prev => (prev.some(t => t.id === taskId) ? prev : [updatedTask, ...prev]));
+                    return;
+                }
+
+                // Si te sacaron, la quitamos de tu lista
+                if (wasInvolvedBefore && !isInvolvedNow) {
+                    setPopup({ message: "Te removieron de una tarea", type: "info" });
+
+                    setTasks(prev => prev.filter(t => t.id !== taskId));
+                    return;
+                }
+
+                // Si sigues siendo colaborador, solo actualiza la tarea
+                if (isInvolvedNow) {
+                    setPopup({ message: "Tarea actualizada", type: "info" });
+
+                    setTasks(prev => prev.map(t => (t.id === taskId ? updatedTask : t)));
+                }
             }
 
         };

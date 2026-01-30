@@ -3,6 +3,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const logout = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("user");
   window.dispatchEvent(new Event("app:logout"));
 };
 
