@@ -1,0 +1,109 @@
+.cal { width: 100%; }
+
+.cal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cal__title { font-size: 18px; font-weight: 700; text-transform: capitalize; }
+
+.cal__actions button {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  cursor: pointer;
+}
+
+.cal__weekdays, .cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cal__weekday {
+  padding: 8px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.cal__grid { gap: 8px; }
+
+.cal__cell {
+  min-height: 110px;
+  border-radius: 16px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.cal__cell--outMonth { opacity: 0.45; }
+.cal__cell--today { outline: 2px solid rgba(255,255,255,0.25); }
+
+.cal__cellTop { display: flex; justify-content: space-between; align-items: center; }
+.cal__dayNum { font-weight: 800; }
+
+.cal__tasks {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* apilado */
+}
+
+.task {
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+}
+
+/* Colores por clase (ajústalos a tu tema) */
+.task--low { background: rgba(80, 160, 255, 0.15); }
+.task--medium { background: rgba(255, 200, 80, 0.18); }
+.task--high { background: rgba(255, 100, 120, 0.18); }
+.task--done { background: rgba(120, 255, 160, 0.14); text-decoration: line-through; opacity: 0.75; }
+.task--overdue { background: rgba(255, 80, 80, 0.18); }
+
+.cal__more {
+  font-size: 12px;
+  opacity: 0.8;
+  padding: 4px 6px;
+}
+
+.cal__modalBackdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+
+.cal__modal {
+  width: min(520px, 95vw);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(25,25,30,0.95);
+  padding: 14px;
+}
+
+.cal__modalHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cal__modalTitle { font-weight: 800; }
+
+.cal__modalList { display: flex; flex-direction: column; gap: 10px; }
+.cal__modalItem { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+
+.cal__status { opacity: 0.8; font-size: 12px; }
+.cal__empty { opacity: 0.8; padding: 10px 0; }

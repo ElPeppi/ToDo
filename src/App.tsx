@@ -18,6 +18,7 @@ import LogoutListener from "./components/listener/LogoutListener";
 // RUTAS ANIMADAS
 // =========================
 import AppLayout from "./layout/AppLayout";
+import Calendar from "./pages/calendar/Calendar";
 
 function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
   const location = useLocation();
@@ -65,7 +66,14 @@ function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
               </PageTransition>
             }
           />
-
+          <Route
+            path="/calendar"
+            element={
+              <PageTransition>
+                <Calendar setPopup={setPopup} />
+              </PageTransition>
+            }
+            />
           <Route
             path="/settings"
             element={

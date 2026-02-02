@@ -7,4 +7,5 @@ export interface GroupInterface {
   description?: string;
   members: UserInterface[];
   tasks: TaskInterface[];
+  task_count: number;
 }
