@@ -5,11 +5,12 @@ import { useState } from "react";
 import Login from "./pages/loginRegister/Login";
 import Register from "./pages/loginRegister/Register";
 import ToDo from "./pages/todo/ToDo";
+import Groups from "./pages/groups/Groups";
+import Settings from "./pages/settings/Settings";
+import Porfile from "./pages/porfile/Porfile";
 import PageTransition from "./components/PageTransition";
 import PopupMessage from "./components/pop-ups/message/PopupMessage";
 import VerifyPage from "./pages/loginRegister/VerifyPage";
-import Groups from "./pages/groups/Groups";
-import Settings from "./pages/settings/Settings";
 import LogoutListener from "./components/listener/LogoutListener";
 
 
@@ -74,6 +75,14 @@ function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
               </PageTransition>
             }
             />
+            <Route
+            path="/porfile"
+            element={
+              <PageTransition>
+                <Porfile setPopup={setPopup} />
+              </PageTransition>
+            }
+          />
           <Route
             path="/settings"
             element={

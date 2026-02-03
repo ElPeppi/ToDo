@@ -8,7 +8,7 @@ export interface TaskInterface {
     createdDate: string;
     dueDate: string;
     status: "pending" | "in-progress" | "completed" | "overdue";
-    group_id?: number;
     priority: "low" | "medium" | "high";
+    group_id?: number;
     members?: UserInterface[]; // Array of User 
 }

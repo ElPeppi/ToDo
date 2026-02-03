@@ -22,6 +22,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
+    const [priority, setPriority] = useState<"low" | "medium" | "high" | "">("");
 
   const [members, setMembers] = useState<UserInterface[]>([]);
   const [groupId, setGroupId] = useState<number | null>(null);
@@ -305,6 +306,14 @@ function ToDo({ setPopup }: { setPopup: Function }) {
               </option>
             ))}
           </select>
+
+          <select name="priority" id="prioritySelect" value={priority} onChange={(e) => setPriority(e.target.value as any)}>
+            <option value="">Selecciona una prioridad</option>
+            <option value="low">Baja</option>
+            <option value="medium">Media</option>
+            <option value="high">Alta</option>
+          </select>
+          
 
           <button
             onClick={() => {

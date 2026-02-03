@@ -42,6 +42,7 @@ export default function TaskCard({ task, groups, onEdit, onDelete }: Props) {
       ) : null}
 
       <p>{task.status}</p>
+      <p>{task.priority}</p>
       <small>Vence: {task.dueDate?.split("T")[0]}</small>
       
     </div>
