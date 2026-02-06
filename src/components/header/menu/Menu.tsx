@@ -9,7 +9,7 @@ function Menu() {
         <Item title="Tareas" route="/todo"  />
         <Item title="Grupo" route="/groups" />
         <Item title="Calendario" route="/calendar" />
-        <Item title="Perfil" route="/porfile" />
+        <Item title="Perfil" route="/profile" />
         <Item title="Configuración" route="/settings" />
       </ul>
     </nav>

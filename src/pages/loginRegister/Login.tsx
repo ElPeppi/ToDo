@@ -14,7 +14,6 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
   }, []);
 
   useEffect(() => {
-    console.log(API_URL)
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
       try {
@@ -35,6 +34,7 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
                 .then(res => res.json())
                 .then(data => {
                   if (data.accessToken) {
+                    
                     localStorage.setItem("accessToken", data.accessToken);
                     navigate("/ToDo");
                   } else {
@@ -59,11 +59,13 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
       });
 
       const data = await response.json();
+      console.log("response log",data);
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
         localStorage.setItem("userId", String(data.user.id));
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("tasksUserInfo", JSON.stringify(data.tasks));
         setPopup({ message: "Login successful!", type: "success" });
         navigate("/ToDo");
       } else {

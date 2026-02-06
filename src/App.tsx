@@ -7,7 +7,6 @@ import Register from "./pages/loginRegister/Register";
 import ToDo from "./pages/todo/ToDo";
 import Groups from "./pages/groups/Groups";
 import Settings from "./pages/settings/Settings";
-import Porfile from "./pages/porfile/Porfile";
 import PageTransition from "./components/PageTransition";
 import PopupMessage from "./components/pop-ups/message/PopupMessage";
 import VerifyPage from "./pages/loginRegister/VerifyPage";
@@ -20,6 +19,7 @@ import LogoutListener from "./components/listener/LogoutListener";
 // =========================
 import AppLayout from "./layout/AppLayout";
 import Calendar from "./pages/calendar/Calendar";
+import Profile from "./pages/porfile/Profile";
 
 function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
   const location = useLocation();
@@ -76,10 +76,10 @@ function AnimatedRoutes({ setPopup }: { setPopup: Function }) {
             }
             />
             <Route
-            path="/porfile"
+            path="/profile"
             element={
               <PageTransition>
-                <Porfile setPopup={setPopup} />
+                <Profile setPopup={setPopup} />
               </PageTransition>
             }
           />

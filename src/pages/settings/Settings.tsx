@@ -5,7 +5,10 @@ function Settings({ setPopup }: { setPopup: Function }) {
         document.documentElement.setAttribute("data-page", "settings");
         setPopup({ message: "settings", type: "success" });
     }, []);
-    return <div>Settings Page</div>;
+    return (
+        <div>Settings</div>
+        
+    );
 }
 
 export default Settings;
