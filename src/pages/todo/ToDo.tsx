@@ -5,7 +5,7 @@ import PopupCreateGroup from "../../components/pop-ups/group/createGroup/PopupCr
 import PopupEditGroup from "../../components/pop-ups/group/editGorup/PopupEditGroup";
 import PopupEditTask from "../../components/pop-ups/editTasks/EditTask";
 
-import UserSelector from "../../components/selector/UserSelector";
+import UserSelector from "../../components/selector/userSelector/UserSelector";
 import TaskCard from "../../components/task/TaskCard";
 
 import type { UserInterface } from "../../interface/UserInterface";
@@ -22,7 +22,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-    const [priority, setPriority] = useState<"low" | "medium" | "high" | "">("");
+  const [priority, setPriority] = useState<"low" | "medium" | "high" | "">("");
 
   const [members, setMembers] = useState<UserInterface[]>([]);
   const [groupId, setGroupId] = useState<number | null>(null);
@@ -137,33 +137,22 @@ function ToDo({ setPopup }: { setPopup: Function }) {
         setPopup({ message: "Una tarea fue eliminada", type: "info" });
       }
 
-      if (msg.type === "task:updated" && msg.task) {
-        const updatedTask = msg.task as TaskInterface;
-        const taskId = updatedTask.id;
+      if (msg.type === "group:created") {
+        fetchGroups(); // refresca grupos => el select se re-renderiza
+        setPopup({ message: "Nuevo grupo creado", type: "success" });
+      }
 
-        const newIds = Array.isArray(msg.newCollaboratorIds) ? msg.newCollaboratorIds : [];
-        const prevIds = Array.isArray(msg.previousCollaboratorIds) ? msg.previousCollaboratorIds : [];
+      if (msg.type === "group:updated") {
+        fetchGroups(); // igual aquí
+        setPopup({ message: "Grupo actualizado", type: "info" });
+      }
 
-        const currentUserId = parseInt(localStorage.getItem("userId") || "0", 10);
-
-        const wasInvolvedBefore = prevIds.includes(currentUserId);
-        const isInvolvedNow = newIds.includes(currentUserId);
-
-        if (!wasInvolvedBefore && isInvolvedNow) {
-          setPopup({ message: "Fuiste agregado a una tarea", type: "info" });
-          setTasks((prev) => (prev.some((t) => t.id === taskId) ? prev : [updatedTask, ...prev]));
-          return;
-        }
-
-        if (wasInvolvedBefore && !isInvolvedNow) {
-          setPopup({ message: "Te removieron de una tarea", type: "info" });
-          setTasks((prev) => prev.filter((t) => t.id !== taskId));
-          return;
-        }
-
-        if (isInvolvedNow) {
-          setPopup({ message: "Tarea actualizada", type: "info" });
-          setTasks((prev) => prev.map((t) => (t.id === taskId ? updatedTask : t)));
+      if (msg.type === "group:deleted") {
+        fetchGroups();
+        // opcional: si borraron el grupo seleccionado, limpiar selection
+        if (groupId && msg.groupId === groupId) {
+          setGroupId(null);
+          setSelectedGroup(null);
         }
       }
     };
@@ -184,6 +173,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
           dueDate,
           groupId,
           members: members.map((u) => u.id),
+          priority: priority || undefined,
         }),
       });
 
@@ -313,7 +303,7 @@ function ToDo({ setPopup }: { setPopup: Function }) {
             <option value="medium">Media</option>
             <option value="high">Alta</option>
           </select>
-          
+
 
           <button
             onClick={() => {

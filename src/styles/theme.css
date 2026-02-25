@@ -1,3 +1,4 @@
+/* Base: si NO hay data-theme, usamos light por defecto */
 :root {
   --bg: #ffffff;
   --bgLogContainerFisrt: #dadada;
@@ -5,36 +6,45 @@
   --primary: #3b82f6;
 }
 
-/* 📌 Tema oscuro */
+/* ✅ Tema oscuro manual */
 :root[data-theme="dark"] {
-  --bgLogContainerFisrt: #535353;
+  --bgLogContainerFisrt: #14215c;
   --bg: #494949;
   --text: #ffffff;
   --primary: #60a5fa;
 }
 
-/* 📌 Preferencia automática del sistema */
+/* Tema claro manual (opcional, pero útil) */
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --text: #111111;
+  --primary: #3b82f6;
+}
+
+/* Automático por sistema SOLO si NO has seteado data-theme */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bgLogContainerFisrt: #0c256e;
-    --bg: #0F1F52;
-    --text: #ffffff;
+  :root:not([data-theme]) {
+    --bg: #0f1115;
+    --text: #f5f5f7;
+    --primary: #60a5fa;
   }
 }
 
-/* ============ FONDOS POR PÁGINA ============ */
+:root[data-page="login"] {
+  --bg: #1c2e63;
+  --text: #ffffff;
+  --primary: #6b4eff;
+  --bgLogContainerFisrt: #15235a;
+}
 
-/* Login / Register */
-:root[data-page="login"],
 :root[data-page="register"] {
-  --bg: #0d1b44;
+  --bg: #1c2e63;
+  --text: #ffffff;
+  --primary: #6b4eff;
+  --bgLogContainerFisrt: #15235a;
 }
 
-/* To-Do */
-:root[data-page="todo"] {
-  --bg: #102a7a;
-}
-
-:root[data-page="groups"] {
-  --bg: #201f3b;
+/* Ayuda al browser a pintar inputs/scrollbars según el tema */
+html {
+  color-scheme: light dark;
 }

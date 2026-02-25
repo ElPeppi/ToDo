@@ -5,10 +5,12 @@ import { handleLogout } from "../../utils/HandelLogout";
 import GroupCard from "../../components/group/GroupCard";
 import "./groups.css";
 import PopupEditGroup from "../../components/pop-ups/group/editGorup/PopupEditGroup";
+import PopupCreateGroup from "../../components/pop-ups/group/createGroup/PopupCreateGroup";
 
 function Groups({ setPopup }: { setPopup: Function }) {
   const [groups, setGroups] = useState<GroupInterface[]>([]);
   const [showEditGroup, setShowEditGroup] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<GroupInterface | null>(null);
 
   useEffect(() => {
@@ -93,7 +95,14 @@ function Groups({ setPopup }: { setPopup: Function }) {
           group={selectedGroup}
         />
       )}
-
+      {showCreateGroup && (
+        <PopupCreateGroup
+          onClose={() => setShowCreateGroup(false)}
+          setPopup={setPopup}
+          onGroupCreated={fetchGroups}
+        />
+      )}
+      <button onClick={() => setShowCreateGroup(true)}>Crear Grupo</button>
       <div className="groups-list">
         {groups.length === 0 ? (
           <p>No hay grupos disponibles.</p>

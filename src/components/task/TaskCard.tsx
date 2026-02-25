@@ -1,6 +1,6 @@
 import type { TaskInterface } from "../../interface/TaskInterface";
 import type { GroupInterface } from "../../interface/GroupInterface";
-import "./TaskCard.css";
+import styles from "./TaskCard.module.css";
 
 type Props = {
   task: TaskInterface;
@@ -14,7 +14,7 @@ export default function TaskCard({ task, groups, onEdit, onDelete }: Props) {
   const groupName = groups.find(g => g.id === task.group_id)?.name ?? ""; 
 
   return (
-    <div className="task-card">
+    <div className={styles.taskCard}>
       <div className="task-header">
         <h3>{task.title}</h3>
 

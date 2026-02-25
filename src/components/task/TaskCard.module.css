@@ -1,0 +1,8 @@
+.taskCard{
+    background-color: var(--task-backgrund);
+    padding: 0.3rem 1rem; 
+}
+.taskCard p,h3 {
+    margin: 0.3rem 0;
+    color : var(--text);
+}

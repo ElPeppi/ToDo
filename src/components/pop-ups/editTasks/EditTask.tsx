@@ -1,7 +1,7 @@
 import "./editTask.css";
 import React, { useState } from "react";
 import { fetchWithAuth } from "../../../services/authService";
-import UserSelector from "../../selector/UserSelector";
+import UserSelector from "../../selector/userSelector/UserSelector";
 import type { UserInterface } from "../../../interface/UserInterface";
 
 interface EditTaskProps {

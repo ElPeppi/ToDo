@@ -34,7 +34,7 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
                 .then(res => res.json())
                 .then(data => {
                   if (data.accessToken) {
-                    
+
                     localStorage.setItem("accessToken", data.accessToken);
                     navigate("/ToDo");
                   } else {
@@ -59,7 +59,7 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
       });
 
       const data = await response.json();
-      console.log("response log",data);
+      console.log("response log", data);
       if (response.ok) {
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("refreshToken", data.refreshToken);
@@ -79,7 +79,7 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
 
 
   return (
-    <>
+    <div className="authPage">
       <button className="topSwitch" onClick={() => navigate("/register")}>
         Signup →
       </button>
@@ -97,9 +97,8 @@ function LoginPage({ setPopup }: { setPopup: Function }) {
 
           <button type="submit">LOGIN</button>
         </form>
-
       </div>
-    </>
+    </div>
   );
 }
 

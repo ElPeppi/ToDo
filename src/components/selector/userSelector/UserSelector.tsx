@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import "./userSelector.css";
-import { fetchWithAuth } from "../../services/authService";
-import type { UserInterface } from "../../interface/UserInterface";
+import styles from "./userSelector.module.css";
+import { fetchWithAuth } from "../../../services/authService";
+import type { UserInterface } from "../../../interface/UserInterface";
 
 export default function UserSelector({
   selected,
@@ -65,12 +65,12 @@ export default function UserSelector({
   };
 
   return (
-    <div className="user-selector">
+    <div className={styles.userSelector}>
 
       {/* TAGS */}
-      <div className="selected-tags">
+      <div className={styles.selectedTags}>
         {selected.map((u) => (
-          <span key={u.id} className="tag">
+          <span key={u.id} className={styles.tag}>
             {u.name}
             <button onClick={() => handleRemove(u.id)}>×</button>
           </span>
@@ -79,7 +79,7 @@ export default function UserSelector({
 
       {/* INPUT */}
       <input
-        className="user-input"
+        className={styles.userInput}
         type="text"
         placeholder="Buscar persona..."
         value={query}
@@ -88,19 +88,19 @@ export default function UserSelector({
 
       {/* DROPDOWN */}
       {query.length > 0 && (
-        <div className="dropdown">
+        <div className={styles.dropdown}>
           {filtered.length === 0 ? (
-            <p className="no-results">No hay coincidencias</p>
+            <p className={styles.noResults}>No hay coincidencias</p>
           ) : (
             filtered.slice(0, 7).map((u) => (
               <div
                 key={u.id}
-                className="dropdown-item"
+                className={styles.dropdownItem}
                 onClick={() => handleSelect(u)}
               >
                 <strong>{u.name}</strong>
                 <br />
-                <span className="email">{u.email}</span>
+                <span className={styles.email}>{u.email}</span>
               </div>
             ))
           )}

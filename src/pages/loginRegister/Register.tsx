@@ -39,7 +39,7 @@ function RegisterPage({setPopup}: {setPopup:Function}) {
     };
 
     return (
-        <>
+        <div className="authPage">
             <button className="topSwitch" onClick={() => navigate("/")}>
                 Login →
             </button>
@@ -61,7 +61,7 @@ function RegisterPage({setPopup}: {setPopup:Function}) {
                     <button type="submit">REGISTER</button>
                 </form>
             </div>
-        </>
+        </div>
     );
 }
 

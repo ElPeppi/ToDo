@@ -1,6 +1,6 @@
 import "./popupEditGroup.css";
 import { useEffect, useState } from "react";
-import UserSelector from "../../../selector/UserSelector";
+import UserSelector from "../../../selector/userSelector/UserSelector";
 import type { UserInterface } from "../../../../interface/UserInterface";
 import type { GroupInterface } from "../../../../interface/GroupInterface";
 import { fetchWithAuth } from "../../../../services/authService";

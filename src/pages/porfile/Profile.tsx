@@ -1,5 +1,6 @@
 import {useEffect, useState } from "react";
 import type { UserInterface } from "../../interface/UserInterface";
+import ImageUserSelector from "../../components/selector/imageUserSelector/ImageUserSelector";
 
 function Profile({ setPopup }: { setPopup: Function }) {
     const [user, setUser] = useState<UserInterface | null>(null);
@@ -44,7 +45,7 @@ function Profile({ setPopup }: { setPopup: Function }) {
                     </div>
                 </div>
                 <div className="account-information"></div>
-            
+                    <ImageUserSelector />
             </div>
         );
     }

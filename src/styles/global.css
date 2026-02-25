@@ -1,13 +1,26 @@
-#root{
+#root {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
+  /* o flex pero sin centrar */
+}
+
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  transition: background 0.25s ease, color 0.25s ease;
+  font-family: 'Poppins', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  transition: background 0.4s ease;
+ul {
+  list-style: none;
+}
+li {
+  list-style: none;
 }

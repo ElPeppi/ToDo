@@ -1,0 +1,35 @@
+.header {
+    position: sticky;
+    /* se queda arriba al hacer scroll */
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.menu {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 12px 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin: 0;
+    padding: 0;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

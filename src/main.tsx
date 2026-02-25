@@ -4,6 +4,9 @@ import './index.css'
 import './styles/global.css'
 import './styles/theme.css'
 import App from './App.tsx'
+import { initTheme } from "./utils/theme";
+
+initTheme();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

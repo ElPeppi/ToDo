@@ -1,5 +1,5 @@
 import "./popupCreateGroup.css";
-import UserSelector from "../../../selector/UserSelector";
+import UserSelector from "../../../selector/userSelector/UserSelector";
 import React, { useState } from "react";
 import type {UserInterface}  from "../../../../interface/UserInterface";
 import { fetchWithAuth } from "../../../../services/authService";
