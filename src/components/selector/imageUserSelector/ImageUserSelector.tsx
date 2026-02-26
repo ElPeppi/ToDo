@@ -1,9 +1,13 @@
 import { useRef, useState } from "react";
-
-export default function ProfilePhotoUploader() {
+import { fetchWithAuth } from "../../../services/authService";
+interface Props {
+    photoUrl?: string;
+  }
+export default function ProfilePhotoUploader({ photoUrl }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [photoUrl, setPhotoUrl] = useState<string>("");
+  const [photoUrlState, setPhotoUrlState] = useState<string>(photoUrl || "");
 
+  
   const upload = async () => {
     const file = fileRef.current?.files?.[0];
     if (!file) return alert("Selecciona una imagen primero");
@@ -30,8 +34,14 @@ export default function ProfilePhotoUploader() {
     if (!put.ok) throw new Error("Falló el upload a S3");
 
     // 3) URL pública (si tu bucket/CloudFront lo permite)
-    const publicUrl = `https://todo-profile-photos.s3.us-east-1.amazonaws.com/${key}`;
-    setPhotoUrl(publicUrl);
+    const publicUrl = `https://todofoto.jan-productions.com/${key}`;
+      setPhotoUrlState(publicUrl);
+
+    const addBackend = await fetchWithAuth("/users/me/photo", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ photoUrl: publicUrl }),
+    });
   };
 
   return (
@@ -39,9 +49,9 @@ export default function ProfilePhotoUploader() {
       <input ref={fileRef} type="file" accept="image/*" />
       <button onClick={upload}>Subir foto</button>
 
-      {photoUrl && (
+      {photoUrlState && (
         <div style={{ marginTop: 12 }}>
-          <img src={photoUrl} alt="profile" style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover" }} />
+          <img src={photoUrlState} alt="profile" style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover" }} />
         </div>
       )}
     </div>

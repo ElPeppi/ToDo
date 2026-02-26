@@ -11,6 +11,8 @@ function Profile({ setPopup }: { setPopup: Function }) {
         const currentUser = localStorage.getItem("user");
         if (currentUser) {
             setUser(JSON.parse(currentUser));
+            console.log
+            console.log("User data loaded:", JSON.parse(currentUser)); // 👈 mejor log
         } 
         
     }, [setPopup]);
@@ -20,8 +22,7 @@ function Profile({ setPopup }: { setPopup: Function }) {
             <div className="porfile-page">
                 <div className="photo">
                     {user && user.photo ? (
-                        <img src={user.photo
-} alt="User Profile" />
+                        <img src={"https://todofoto.jan-productions.com/"+user.photo} alt="User Profile" />
                     ) : (
                         <div className="placeholder-photo">{user ? user.name.charAt(0).toUpperCase() : "U"}</div>
                     )}
@@ -45,7 +46,7 @@ function Profile({ setPopup }: { setPopup: Function }) {
                     </div>
                 </div>
                 <div className="account-information"></div>
-                    <ImageUserSelector />
+                    <ImageUserSelector photoUrl={user?.photo || undefined} />
             </div>
         );
     }
