@@ -1,13 +1,8 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { fetchWithAuth } from "../../../services/authService";
-interface Props {
-    photoUrl?: string;
-  }
-export default function ProfilePhotoUploader({ photoUrl }: Props) {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [photoUrlState, setPhotoUrlState] = useState<string>(photoUrl || "");
 
-  
+export default function ProfilePhotoUploader({ selected, setSelected   }: { selected: string; setSelected: (url: string) => void }) {
+  const fileRef = useRef<HTMLInputElement>(null);
   const upload = async () => {
     const file = fileRef.current?.files?.[0];
     if (!file) return alert("Selecciona una imagen primero");
@@ -35,25 +30,24 @@ export default function ProfilePhotoUploader({ photoUrl }: Props) {
 
     // 3) URL pública (si tu bucket/CloudFront lo permite)
     const publicUrl = `https://todofoto.jan-productions.com/${key}`;
-      setPhotoUrlState(publicUrl);
-
-    const addBackend = await fetchWithAuth("/users/me/photo", {
+    console.log("Imagen subida a:", publicUrl); 
+    localStorage.setItem("user", JSON.stringify({ ...JSON.parse(localStorage.getItem("user") || "{}"), photo: publicUrl }));
+    const addBackend = await fetchWithAuth("/api/users/me/photo", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ photoUrl: publicUrl }),
     });
+
+    if (!addBackend.ok) throw new Error("Falló el update en backend");
+    setSelected && setSelected(publicUrl);
+    console.log("Foto de perfil actualizada con éxito");
+    console.log(selected);
   };
 
   return (
     <div>
       <input ref={fileRef} type="file" accept="image/*" />
       <button onClick={upload}>Subir foto</button>
-
-      {photoUrlState && (
-        <div style={{ marginTop: 12 }}>
-          <img src={photoUrlState} alt="profile" style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover" }} />
-        </div>
-      )}
     </div>
   );
 }
